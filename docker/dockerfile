@@ -31,7 +31,7 @@ WORKDIR /app
 
 LABEL org.opencontainers.image.source="https://github.com/louislam/uptime-kuma"
 
-ENV uptime_kuma_revanced_IS_CONTAINER=1
+ENV uptime_kuma_IS_CONTAINER=1
 
 # Copy app files from build layer
 COPY --chown=node:node --from=build /app /app
