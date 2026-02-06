@@ -3,7 +3,7 @@
 </div>
 
 > [!CAUTION]
-> **DEVELOPMENT ONLY**: This version of Uptime Kuma Revanced is intended for development and testing purposes only. It is **NOT** recommended for production environments.
+> **DEVELOPMENT ONLY**: This version of Uptime Kuma is intended for development and testing purposes only. It is **NOT** recommended for production environments.
 
 # Uptime Kuma Revanced
 
