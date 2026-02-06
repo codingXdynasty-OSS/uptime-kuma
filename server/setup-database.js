@@ -97,10 +97,10 @@ class SetupDatabase {
             this.needSetup = false;
             log.info("setup-database", "uptime_kuma_revanced_DB_TYPE is provided by env, try to override db-config.json");
             dbConfig.type = process.env.uptime_kuma_revanced_DB_TYPE;
-            dbConfig.hostname = process.env.uptime_kuma_revanced_DB_HOSTNAME;
+            dbConfig.hostname = process.env.uptime_kuma_revanced_DB_HOST || process.env.uptime_kuma_revanced_DB_HOSTNAME;
             dbConfig.port = process.env.uptime_kuma_revanced_DB_PORT;
             dbConfig.dbName = process.env.uptime_kuma_revanced_DB_NAME;
-            dbConfig.username = getEnvOrFile("uptime_kuma_revanced_DB_USERNAME");
+            dbConfig.username = getEnvOrFile("uptime_kuma_revanced_DB_USER") || getEnvOrFile("uptime_kuma_revanced_DB_USERNAME");
             dbConfig.password = getEnvOrFile("uptime_kuma_revanced_DB_PASSWORD");
             dbConfig.socketPath = process.env.uptime_kuma_revanced_DB_SOCKET?.trim();
             dbConfig.ssl = getEnvOrFile("uptime_kuma_revanced_DB_SSL")?.toLowerCase() === "true";
