@@ -6,6 +6,10 @@ services:
       target: release
     container_name: uptime-kuma
     restart: unless-stopped
+    environment:
+      # Admin user credentials - created automatically on first startup
+      - UPTIME_KUMA_ADMIN_USER=${UPTIME_KUMA_ADMIN_USER}
+      - UPTIME_KUMA_ADMIN_PASSWORD=${UPTIME_KUMA_ADMIN_PASSWORD}
     volumes:
       - ./data:/app/data
       - ./data/monitors.yaml:/app/data/monitors.yaml

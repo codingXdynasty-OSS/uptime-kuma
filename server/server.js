@@ -1878,8 +1878,37 @@ async function initDatabase(testMode = false) {
 
     // If there is no record in user table, it is a new Uptime Kuma instance, need to setup
     if ((await R.knex("user").count("id as count").first()).count === 0) {
-        log.info("server", "No user, need setup");
-        needSetup = true;
+        // Check if admin credentials are provided via environment variables
+        const adminUser = process.env.UPTIME_KUMA_ADMIN_USER;
+        const adminPass = process.env.UPTIME_KUMA_ADMIN_PASSWORD;
+
+        if (adminUser && adminPass) {
+            log.info("server", "Creating admin user from environment variables");
+            
+            // Validate password strength
+            if (passwordStrength(adminPass).value === "Too weak") {
+                log.error("server", "UPTIME_KUMA_ADMIN_PASSWORD is too weak. Please use a stronger password.");
+                needSetup = true;
+            } else {
+                let user = R.dispense("user");
+                user.username = adminUser;
+                user.password = await passwordHash.generate(adminPass);
+                await R.store(user);
+                log.info("server", `Admin user '${adminUser}' created successfully`);
+                needSetup = false;
+
+                // Initialize config file monitors now that we have a user
+                try {
+                    await initConfigFileMonitors(user.id, server);
+                    log.info("server", "Config file monitors initialized after env user creation");
+                } catch (e) {
+                    log.warn("server", "Failed to initialize config file monitors: " + e.message);
+                }
+            }
+        } else {
+            log.info("server", "No user, need setup");
+            needSetup = true;
+        }
     }
 
     server.jwtSecret = jwtSecretBean.value;
