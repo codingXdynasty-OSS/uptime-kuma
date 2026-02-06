@@ -701,6 +701,14 @@ let needSetup = false;
 
                 needSetup = false;
 
+                // Initialize config file monitors now that we have a user
+                try {
+                    await initConfigFileMonitors(user.id, server);
+                    log.info("server", "Config file monitors initialized after user setup");
+                } catch (e) {
+                    log.warn("server", "Failed to initialize config file monitors: " + e.message);
+                }
+
                 callback({
                     ok: true,
                     msg: "successAdded",
