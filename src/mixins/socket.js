@@ -127,11 +127,14 @@ export default {
                 this.$router.push("/setup");
             });
 
-            socket.on("autoLogin", (monitorID, data) => {
+            socket.on("autoLogin", (username) => {
                 this.loggedIn = true;
                 this.storage().token = "autoLogin";
                 this.socket.token = "autoLogin";
                 this.allowLoginDialog = false;
+                if (username) {
+                    this.username = username;
+                }
             });
 
             socket.on("loginRequired", () => {

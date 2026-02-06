@@ -1729,10 +1729,24 @@ let needSetup = false;
         // ***************************
 
         log.debug("auth", "check auto login");
-        if (await setting("disableAuth")) {
+        
+        // Check for pending auto-login (user created from env vars)
+        if (server.pendingAutoLoginUserId) {
+            const user = await R.findOne("user", " id = ? ", [server.pendingAutoLoginUserId]);
+            if (user) {
+                log.info("auth", `Auto-login: logging in as '${user.username}' (created from env vars)`);
+                await afterLogin(socket, user);
+                socket.emit("autoLogin", user.username);
+                // Clear the flag so subsequent connections require normal login
+                delete server.pendingAutoLoginUserId;
+            } else {
+                socket.emit("loginRequired");
+            }
+        } else if (await setting("disableAuth")) {
             log.info("auth", "Disabled Auth: auto login to admin");
-            await afterLogin(socket, await R.findOne("user"));
-            socket.emit("autoLogin");
+            const user = await R.findOne("user");
+            await afterLogin(socket, user);
+            socket.emit("autoLogin", user ? user.username : null);
         } else {
             socket.emit("loginRequired");
             log.debug("auth", "need auth");
@@ -1896,6 +1910,10 @@ async function initDatabase(testMode = false) {
                 await R.store(user);
                 log.info("server", `Admin user '${adminUser}' created successfully`);
                 needSetup = false;
+
+                // Set flag for auto-login on first connection
+                server.pendingAutoLoginUserId = user.id;
+                log.info("server", "Auto-login pending for first connection");
 
                 // Initialize config file monitors now that we have a user
                 try {
