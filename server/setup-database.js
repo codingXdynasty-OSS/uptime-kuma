@@ -106,6 +106,19 @@ class SetupDatabase {
             dbConfig.ssl = getEnvOrFile("uptime_kuma_revanced_DB_SSL")?.toLowerCase() === "true";
             dbConfig.ca = getEnvOrFile("uptime_kuma_revanced_DB_CA");
             Database.writeDBConfig(dbConfig);
+        } else if (process.env.DB_TYPE) {
+            this.needSetup = false;
+            log.info("setup-database", "DB_TYPE is provided by env, try to override db-config.json");
+            dbConfig.type = process.env.DB_TYPE;
+            dbConfig.hostname = process.env.DB_HOST || process.env.DB_HOSTNAME;
+            dbConfig.port = process.env.DB_PORT;
+            dbConfig.dbName = process.env.DB_NAME;
+            dbConfig.username = getEnvOrFile("DB_USER") || getEnvOrFile("DB_USERNAME");
+            dbConfig.password = getEnvOrFile("DB_PASSWORD");
+            dbConfig.socketPath = process.env.DB_SOCKET?.trim();
+            dbConfig.ssl = (getEnvOrFile("DB_SSL") || "false").toLowerCase() === "true";
+            dbConfig.ca = getEnvOrFile("DB_CA");
+            Database.writeDBConfig(dbConfig);
         }
     }
 
