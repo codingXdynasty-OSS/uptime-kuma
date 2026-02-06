@@ -314,6 +314,14 @@ async function syncConfigMonitors(userId, server) {
         for (const error of result.errors) {
             log.error("config-file", "  - " + error);
         }
+
+        if (server && server.io) {
+            server.io.emit("alert", {
+                type: "error",
+                message: "Config file monitor sync failed with errors:\n" + result.errors.join("\n"),
+            });
+        }
+
         return result;
     }
     

@@ -309,6 +309,14 @@ export default {
             socket.on("refresh", () => {
                 location.reload();
             });
+
+            socket.on("alert", (data) => {
+                if (data.type === "error") {
+                    toast.error(data.message, { timeout: false }); // keep open until clicked
+                } else {
+                    toast.success(data.message);
+                }
+            });
         },
         /**
          * parse all urls from list.
