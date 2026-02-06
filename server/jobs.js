@@ -1,4 +1,4 @@
-const { UptimeKumaServer } = require("./uptime-kuma-server");
+const { UptimeKumaServer } = require("./uptime-kuma-revanced-server");
 const { clearOldData } = require("./jobs/clear-old-data");
 const { incrementalVacuum } = require("./jobs/incremental-vacuum");
 const Cron = require("croner");

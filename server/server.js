@@ -1,9 +1,9 @@
 /*
- * Uptime Kuma Server
+ * Uptime Kuma Revanced Server
  * node "server/server.js"
  * DO NOT require("./server") in other modules, it likely creates circular dependency!
  */
-console.log("Welcome to Uptime Kuma");
+console.log("Welcome to Uptime Kuma Revanced");
 
 // As the log function need to use dayjs, it should be very top
 const dayjs = require("dayjs");
@@ -28,7 +28,7 @@ const requiredNodeVersionsComma = requiredNodeVersions
     .map((version) => version.trim())
     .join(", ");
 
-// Exit Uptime Kuma immediately if the Node.js version is banned
+// Exit Uptime Kuma Revanced immediately if the Node.js version is banned
 if (semver.satisfies(nodeVersion, bannedNodeVersions)) {
     console.error(
         "\x1b[31m%s\x1b[0m",
@@ -56,19 +56,19 @@ if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = "production";
 }
 
-if (!process.env.UPTIME_KUMA_WS_ORIGIN_CHECK) {
-    process.env.UPTIME_KUMA_WS_ORIGIN_CHECK = "cors-like";
+if (!process.env.uptime_kuma_revanced_WS_ORIGIN_CHECK) {
+    process.env.uptime_kuma_revanced_WS_ORIGIN_CHECK = "cors-like";
 }
 
 log.info("server", "Env: " + process.env.NODE_ENV);
-log.debug("server", "Inside Container: " + (process.env.UPTIME_KUMA_IS_CONTAINER === "1"));
+log.debug("server", "Inside Container: " + (process.env.uptime_kuma_revanced_IS_CONTAINER === "1"));
 
-if (process.env.UPTIME_KUMA_WS_ORIGIN_CHECK === "bypass") {
-    log.warn("server", "WebSocket Origin Check: " + process.env.UPTIME_KUMA_WS_ORIGIN_CHECK);
+if (process.env.uptime_kuma_revanced_WS_ORIGIN_CHECK === "bypass") {
+    log.warn("server", "WebSocket Origin Check: " + process.env.uptime_kuma_revanced_WS_ORIGIN_CHECK);
 }
 
 const checkVersion = require("./check-version");
-log.info("server", "Uptime Kuma Version:", checkVersion.version);
+log.info("server", "Uptime Kuma Revanced Version:", checkVersion.version);
 
 log.info("server", "Loading modules");
 
@@ -90,7 +90,7 @@ log.debug("server", "Importing 2FA Modules");
 const notp = require("notp");
 const base32 = require("thirty-two");
 
-const { UptimeKumaServer } = require("./uptime-kuma-server");
+const { UptimeKumaServer } = require("./uptime-kuma-revanced-server");
 const server = UptimeKumaServer.getInstance();
 const io = (module.exports.io = server.io);
 const app = server.app;
@@ -141,8 +141,8 @@ if (hostname) {
 const port = config.port;
 
 const disableFrameSameOrigin =
-    !!process.env.UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN || args["disable-frame-sameorigin"] || false;
-const cloudflaredToken = args["cloudflared-token"] || process.env.UPTIME_KUMA_CLOUDFLARED_TOKEN || undefined;
+    !!process.env.uptime_kuma_revanced_DISABLE_FRAME_SAMEORIGIN || args["disable-frame-sameorigin"] || false;
+const cloudflaredToken = args["cloudflared-token"] || process.env.uptime_kuma_revanced_CLOUDFLARED_TOKEN || undefined;
 
 // 2FA / notp verification defaults
 const twoFAVerifyOptions = {
@@ -345,7 +345,7 @@ let needSetup = false;
     app.use("/upload", express.static(Database.uploadDir));
 
     app.get("/.well-known/change-password", async (_, response) => {
-        response.redirect("https://github.com/louislam/uptime-kuma/wiki/Reset-Password-via-CLI");
+        response.redirect("https://github.com/louislam/uptime-kuma-revanced/wiki/Reset-Password-via-CLI");
     });
 
     // API Router
@@ -538,7 +538,7 @@ let needSetup = false;
 
                     // Google authenticator doesn't like equal signs
                     // The fix is found at https://github.com/guyht/notp
-                    // Related issue: https://github.com/louislam/uptime-kuma/issues/486
+                    // Related issue: https://github.com/louislam/uptime-kuma-revanced/issues/486
                     encodedSecret = encodedSecret.toString().replace(/=/g, "");
 
                     let uri = `otpauth://totp/Uptime%20Kuma:${user.username}?secret=${encodedSecret}`;
@@ -690,7 +690,7 @@ let needSetup = false;
 
                 if ((await R.knex("user").count("id as count").first()).count !== 0) {
                     throw new Error(
-                        "Uptime Kuma has been initialized. If you want to run setup again, please delete the database."
+                        "Uptime Kuma Revanced has been initialized. If you want to run setup again, please delete the database."
                     );
                 }
 
@@ -1892,18 +1892,18 @@ async function initDatabase(testMode = false) {
         log.debug("server", "Load JWT secret from database.");
     }
 
-    // If there is no record in user table, it is a new Uptime Kuma instance, need to setup
+    // If there is no record in user table, it is a new Uptime Kuma Revanced instance, need to setup
     if ((await R.knex("user").count("id as count").first()).count === 0) {
         // Check if admin credentials are provided via environment variables
-        const adminUser = process.env.UPTIME_KUMA_ADMIN_USER;
-        const adminPass = process.env.UPTIME_KUMA_ADMIN_PASSWORD;
+        const adminUser = process.env.uptime_kuma_revanced_ADMIN_USER;
+        const adminPass = process.env.uptime_kuma_revanced_ADMIN_PASSWORD;
 
         if (adminUser && adminPass) {
             log.info("server", "Creating admin user from environment variables");
             
             // Validate password strength
             if (passwordStrength(adminPass).value === "Too weak") {
-                log.error("server", "UPTIME_KUMA_ADMIN_PASSWORD is too weak. Please use a stronger password.");
+                log.error("server", "uptime_kuma_revanced_ADMIN_PASSWORD is too weak. Please use a stronger password.");
                 needSetup = true;
             } else {
                 let user = R.dispense("user");
@@ -2059,7 +2059,7 @@ gracefulShutdown(server.httpServer, {
 let unexpectedErrorHandler = (error, promise) => {
     console.trace(error);
     UptimeKumaServer.errorLog(error, false);
-    console.error("If you keep encountering errors, please report to https://github.com/louislam/uptime-kuma/issues");
+    console.error("If you keep encountering errors, please report to https://github.com/louislam/uptime-kuma-revanced/issues");
 };
 process.addListener("unhandledRejection", unexpectedErrorHandler);
 process.addListener("uncaughtException", unexpectedErrorHandler);

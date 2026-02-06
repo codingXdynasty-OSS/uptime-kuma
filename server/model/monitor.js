@@ -50,7 +50,7 @@ const { Proxy } = require("../proxy");
 const { demoMode } = require("../config");
 const version = require("../../package.json").version;
 const apicache = require("../modules/apicache");
-const { UptimeKumaServer } = require("../uptime-kuma-server");
+const { UptimeKumaServer } = require("../uptime-kuma-revanced-server");
 const { DockerHost } = require("../docker");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -463,7 +463,7 @@ class Monitor extends BeanModel {
             }
 
             // Runtime patch timeout if it is 0
-            // See https://github.com/louislam/uptime-kuma/pull/3961#issuecomment-1804149144
+            // See https://github.com/louislam/uptime-kuma-revanced/pull/3961#issuecomment-1804149144
             if (!this.timeout || this.timeout <= 0) {
                 this.timeout = this.interval * 1000 * 0.8;
             }
@@ -575,7 +575,7 @@ class Monitor extends BeanModel {
                         const randomFloatString = Math.random().toString(36);
                         const cacheBust = randomFloatString.substring(2);
                         options.params = {
-                            uptime_kuma_cachebuster: cacheBust,
+                            uptime_kuma_revanced_cachebuster: cacheBust,
                         };
                     }
 
@@ -667,7 +667,7 @@ class Monitor extends BeanModel {
                     }
 
                     // eslint-disable-next-line eqeqeq
-                    if (process.env.UPTIME_KUMA_LOG_RESPONSE_BODY_MONITOR_ID == this.id) {
+                    if (process.env.uptime_kuma_revanced_LOG_RESPONSE_BODY_MONITOR_ID == this.id) {
                         log.info("monitor", res.data);
                     }
 
@@ -933,7 +933,7 @@ class Monitor extends BeanModel {
                         {
                             allowAutoTopicCreation: this.kafkaProducerAllowAutoTopicCreation,
                             ssl: this.kafkaProducerSsl,
-                            clientId: `Uptime-Kuma/${version}`,
+                            clientId: `uptime-kuma-revanced/${version}`,
                             interval: this.interval,
                         },
                         JSON.parse(this.kafkaProducerSaslOptions)
@@ -1136,7 +1136,7 @@ class Monitor extends BeanModel {
             } catch (e) {
                 console.trace(e);
                 UptimeKumaServer.errorLog(e, false);
-                log.error("monitor", "Please report to https://github.com/louislam/uptime-kuma/issues");
+                log.error("monitor", "Please report to https://github.com/louislam/uptime-kuma-revanced/issues");
 
                 if (!this.isStop) {
                     log.info("monitor", "Try to restart the monitor");

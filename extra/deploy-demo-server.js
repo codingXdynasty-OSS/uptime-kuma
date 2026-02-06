@@ -9,13 +9,13 @@ const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
         console.log("SSH to demo server");
         const ssh = new NodeSSH();
         await ssh.connect({
-            host: process.env.UPTIME_KUMA_DEMO_HOST,
-            port: process.env.UPTIME_KUMA_DEMO_PORT,
-            username: process.env.UPTIME_KUMA_DEMO_USERNAME,
-            privateKeyPath: process.env.UPTIME_KUMA_DEMO_PRIVATE_KEY_PATH,
+            host: process.env.uptime_kuma_revanced_DEMO_HOST,
+            port: process.env.uptime_kuma_revanced_DEMO_PORT,
+            username: process.env.uptime_kuma_revanced_DEMO_USERNAME,
+            privateKeyPath: process.env.uptime_kuma_revanced_DEMO_PRIVATE_KEY_PATH,
         });
 
-        let cwd = process.env.UPTIME_KUMA_DEMO_CWD;
+        let cwd = process.env.uptime_kuma_revanced_DEMO_CWD;
         let result;
 
         const version = await prompt("Enter Version: ");

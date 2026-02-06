@@ -1,7 +1,7 @@
 # Project Info
 
 First of all, I want to thank everyone who has submitted issues or shared pull
-requests for Uptime Kuma. I never thought the GitHub community would be so nice!
+requests for Uptime Kuma Revanced. I never thought the GitHub community would be so nice!
 Because of this, I also never thought that other people would actually read and
 edit my code. Parts of the code are not very well-structured or commented, sorry
 about that.
@@ -29,7 +29,7 @@ development, we run vite in development mode on another port.
 - `src` (Frontend source code)
 - `test` (unit test)
 
-## Can I Create a Pull Request for Uptime Kuma?
+## Can I Create a Pull Request for Uptime Kuma Revanced?
 
 Whether or not you can create a pull request depends on the nature of your
 contribution. We value both your time and our maintainers' time, so we want to
@@ -53,8 +53,8 @@ to review the appropriate one for your contribution.
   parts like the documentation.
   [**PLEASE SEE OUR SECURITY POLICY.**](SECURITY.md)
 
-  [advisory]: https://github.com/louislam/uptime-kuma/security/advisories/new
-  [issue]: https://github.com/louislam/uptime-kuma/issues/new?template=security_issue.yml
+  [advisory]: https://github.com/louislam/uptime-kuma-revanced/security/advisories/new
+  [issue]: https://github.com/louislam/uptime-kuma-revanced/issues/new?template=security_issue.yml
 
   </p>
   </details>
@@ -79,12 +79,12 @@ to review the appropriate one for your contribution.
 
   Please add **all** strings that are translatable to `src/lang/en.json`. If translation keys are omitted, they cannot be translated. **Do not include any other languages in your initial pull request** (even if it is your mother tongue) to avoid merge conflicts between Weblate and `master`. Once your PR is merged into `master`, the strings can be translated by awesome people donating their language skills.
 
-  We use Weblate to localise this project into many languages. If you want to help translate Uptime Kuma into your language, please see [these instructions on how to translate using Weblate](https://github.com/louislam/uptime-kuma/blob/master/src/lang/README.md).
+  We use Weblate to localise this project into many languages. If you want to help translate Uptime Kuma Revanced into your language, please see [these instructions on how to translate using Weblate](https://github.com/louislam/uptime-kuma-revanced/blob/master/src/lang/README.md).
 
   There are some cases where a change cannot be done directly in Weblate and requires a PR:
   - A text may not yet be localisable. In this case, **adding a new language key** via `{{ $t("Translation key") }}` or [`<i18n-t keypath="Translation key">`](https://vue-i18n.intlify.dev/guide/advanced/component.html) might be necessary.
   - Language keys need to be **added to `en.json`** to appear in Weblate. If this has not been done, a PR is appreciated.
-  - **Adding a new language** requires creating a new file. See [these instructions](https://github.com/louislam/uptime-kuma/blob/master/src/lang/README.md).
+  - **Adding a new language** requires creating a new file. See [these instructions](https://github.com/louislam/uptime-kuma-revanced/blob/master/src/lang/README.md).
 
   <sub>Because maintainer time is precious, junior maintainers may merge uncontroversial PRs in this area.</sub>
 
@@ -177,7 +177,7 @@ to review the appropriate one for your contribution.
     - in the unhappy-path: throw an `Error` for each fault that is detected with an actionable error message.
     - NEVER set `heartbeat.status = DOWN` unless you want to explicitly ignore retries.
 
-  - `server/uptime-kuma-server.js` is where the monitoring backend needs to be
+  - `server/uptime-kuma-revanced-server.js` is where the monitoring backend needs to be
     registered. _If you have an idea how we can skip this step, we would love to
     hear about it ^^_
 
@@ -213,11 +213,11 @@ to review the appropriate one for your contribution.
   <p>
 
   Contributing is easy and fun. We will guide you through the process:
-  1. **Fork** the [Uptime-Kuma repository](https://github.com/louislam/uptime-kuma/) and **clone** it to your local machine.
+  1. **Fork** the [uptime-kuma-revanced repository](https://github.com/louislam/uptime-kuma-revanced/) and **clone** it to your local machine.
   2. **Create a new branch** for your changes (e.g., `signal-notification-provider`).
   3. **Make your changes** and **commit** them with a clear message.
   4. **Push** your changes to your forked repository.
-  5. **Open a pull request** to the `master` branch of the Uptime Kuma repository.
+  5. **Open a pull request** to the `master` branch of the Uptime Kuma Revanced repository.
      - For large changes, please open a **draft pull request** first to discuss the changes with the maintainers.
   6. **Provide a clear and concise description** of the changes you've made and link any related issues.
   7. **Complete the PR checklist** and make sure all CI checks pass.
@@ -249,7 +249,7 @@ to review the appropriate one for your contribution.
   not get merged / not get merged quickly. Such changes require a major version
   release.
 - **Test your code** before submitting a PR. Buggy PRs will not be merged.
-- Make sure the **UI/UX is close to Uptime Kuma**.
+- Make sure the **UI/UX is close to Uptime Kuma Revanced**.
 - **Think about the maintainability**: Don't add functionality that is
   completely **out of scope**. Keep in mind that we need to be able to maintain
   the functionality.
@@ -268,7 +268,7 @@ I ([@louislam](https://github.com/louislam)) have the final say.
 If your pull request does not meet my expectations, I will reject it, no matter how much time
 you spent on it.
 
-We will assign your pull request to a [milestone](https://github.com/louislam/uptime-kuma/milestones), if we plan to review and merge it.
+We will assign your pull request to a [milestone](https://github.com/louislam/uptime-kuma-revanced/milestones), if we plan to review and merge it.
 
 Please don't rush or ask for an ETA.
 We have to understand the pull request, make sure it has no breaking changes and stick to the vision of this project, especially for large pull requests.
@@ -284,7 +284,7 @@ are stuck on. We are here to help.
 ## Project Style
 
 I personally do not like something that requires a lot of configuration before
-you can finally start the app. The goal is to make the Uptime Kuma installation
+you can finally start the app. The goal is to make the Uptime Kuma Revanced installation
 as easy as installing a mobile app.
 
 - Easy to install for non-Docker users
@@ -379,7 +379,7 @@ in the `socket.io` handlers. `express.js` is also used to serve:
 - `routers/` (Express Routers)
 - `socket-handler/` (Socket.io Handlers)
 - `server.js` (Server entry point)
-- `uptime-kuma-server.js` (UptimeKumaServer class, main logic should be here,
+- `uptime-kuma-revanced-server.js` (UptimeKumaServer class, main logic should be here,
   but some still in `server.js`)
 
 ## Frontend Dev Server
@@ -393,7 +393,7 @@ You can use Vue.js devtools Chrome extension for debugging.
 
 ### Frontend Details
 
-Uptime Kuma Frontend is a single page application (SPA). Most paths are handled
+Uptime Kuma Revanced Frontend is a single page application (SPA). Most paths are handled
 by Vue Router.
 
 The router is in `src/router.js`
@@ -404,7 +404,7 @@ The data and socket logic are in `src/mixins/socket.js`.
 
 ## Database Migration
 
-See: <https://github.com/louislam/uptime-kuma/tree/master/db/knex_migrations>
+See: <https://github.com/louislam/uptime-kuma-revanced/tree/master/db/knex_migrations>
 
 ## Unit Test
 
@@ -448,7 +448,7 @@ English is not the native language of the maintainers.
 Since there is no way to make a pull request to the wiki, I have set up another
 repo to do that.
 
-<https://github.com/louislam/uptime-kuma-wiki>
+<https://github.com/louislam/uptime-kuma-revanced-wiki>
 
 ## Maintainer
 
@@ -515,7 +515,7 @@ We have a few procedures we follow. These are documented here:
 
   These Items need to be checked:
   - [ ] Check all tags is fine on
-        <https://hub.docker.com/r/louislam/uptime-kuma/tags>
+        <https://hub.docker.com/r/louislam/uptime-kuma-revanced/tags>
   - [ ] Try the Docker image with tag 1.X.X (Clean install / amd64 / arm64 /
         armv7)
   - [ ] Try clean installation with Node.js
@@ -541,9 +541,9 @@ We have a few procedures we follow. These are documented here:
   **Setup Repo**
 
   ```bash
-  git clone https://github.com/louislam/uptime-kuma-wiki.git
-  cd uptime-kuma-wiki
-  git remote add production https://github.com/louislam/uptime-kuma.wiki.git
+  git clone https://github.com/louislam/uptime-kuma-revanced-wiki.git
+  cd uptime-kuma-revanced-wiki
+  git remote add production https://github.com/louislam/uptime-kuma-revanced.wiki.git
   ```
 
   **Push to Production Wiki**

@@ -11,8 +11,8 @@ FROM debian:bookworm-slim AS release
 RUN useradd --create-home kuma
 USER kuma
 WORKDIR /home/kuma
-COPY --from=build /home/kuma/uptime-kuma-push ./uptime-kuma-push
+COPY --from=build /home/kuma/uptime-kuma-revanced-push ./uptime-kuma-revanced-push
 
-ENTRYPOINT ["/home/kuma/uptime-kuma-push"]
+ENTRYPOINT ["/home/kuma/uptime-kuma-revanced-push"]
 
 

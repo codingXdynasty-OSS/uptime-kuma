@@ -20,11 +20,11 @@ class Resend extends NotificationProvider {
             config = this.getAxiosConfigWithProxy(config);
             const email = notification.resendFromEmail.trim();
 
-            const fromName = notification.resendFromName?.trim() || "Uptime Kuma";
+            const fromName = notification.resendFromName?.trim() || "Uptime Kuma Revanced";
             let data = {
                 from: `${fromName} <${email}>`,
                 to: notification.resendToEmail,
-                subject: notification.resendSubject || "Notification from Your Uptime Kuma",
+                subject: notification.resendSubject || "Notification from Your Uptime Kuma Revanced",
                 // supplied text directly instead of html
                 text: msg,
             };

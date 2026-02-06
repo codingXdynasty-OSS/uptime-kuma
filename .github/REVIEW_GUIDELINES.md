@@ -1,4 +1,4 @@
-# Uptime Kuma Review Guidelines
+# Uptime Kuma Revanced Review Guidelines
 
 > [!NOTE]
 > These review guidelines are a work in progress, and are frequently
@@ -67,7 +67,7 @@ If the changes depend on certain environments or configurations, verify that the
 code has been tested in various environments (e.g., local development, staging,
 production).
 
-- [How to test Pull Requests](https://github.com/louislam/uptime-kuma/wiki/Test-Pull-Requests)
+- [How to test Pull Requests](https://github.com/louislam/uptime-kuma-revanced/wiki/Test-Pull-Requests)
 
 ### Edge cases and regressions
 

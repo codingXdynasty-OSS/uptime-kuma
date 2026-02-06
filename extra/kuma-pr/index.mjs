@@ -19,8 +19,8 @@ spawn("docker", [
     "-p", "4000:4000",
     "-p", "4001:4001",
     "--pull", "always",
-    "-e", `UPTIME_KUMA_GH_REPO=${prName}`,
-    "louislam/uptime-kuma:pr-test2"
+    "-e", `uptime_kuma_revanced_GH_REPO=${prName}`,
+    "louislam/uptime-kuma-revanced:pr-test2"
 ], {
     stdio: "inherit",
 });

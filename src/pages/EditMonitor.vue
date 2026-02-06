@@ -1530,7 +1530,7 @@
                                         class="form-check-label"
                                         for="cache-bust"
                                     >
-                                        <code>uptime_kuma_cachebuster</code>
+                                        <code>uptime_kuma_revanced_cachebuster</code>
                                     </i18n-t>
                                 </label>
                                 <div class="form-text">

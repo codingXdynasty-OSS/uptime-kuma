@@ -1,7 +1,7 @@
 /*
  * ⚠️ ⚠️ ⚠️ ⚠️ Due to the weird issue in Portainer that the healthcheck script is still pointing to this script for unknown reason.
  * IT CANNOT BE DROPPED, even though it looks like it is not used.
- * See more: https://github.com/louislam/uptime-kuma/issues/2774#issuecomment-1429092359
+ * See more: https://github.com/louislam/uptime-kuma-revanced/issues/2774#issuecomment-1429092359
  *
  * ⚠️ Deprecated: Changed to healthcheck.go, it will be deleted in the future.
  * This script should be run after a period of time (180s), because the server may need some time to prepare.
@@ -12,8 +12,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 let client;
 
-const sslKey = process.env.UPTIME_KUMA_SSL_KEY || process.env.SSL_KEY || undefined;
-const sslCert = process.env.UPTIME_KUMA_SSL_CERT || process.env.SSL_CERT || undefined;
+const sslKey = process.env.uptime_kuma_revanced_SSL_KEY || process.env.SSL_KEY || undefined;
+const sslCert = process.env.uptime_kuma_revanced_SSL_CERT || process.env.SSL_CERT || undefined;
 
 if (sslKey && sslCert) {
     client = require("https");
@@ -23,14 +23,14 @@ if (sslKey && sslCert) {
 
 // If host is omitted, the server will accept connections on the unspecified IPv6 address (::) when IPv6 is available and the unspecified IPv4 address (0.0.0.0) otherwise.
 // Dual-stack support for (::)
-let hostname = process.env.UPTIME_KUMA_HOST;
+let hostname = process.env.uptime_kuma_revanced_HOST;
 
 // Also read HOST if not *BSD, as HOST is a system environment variable in FreeBSD
 if (!hostname && !FBSD) {
     hostname = process.env.HOST;
 }
 
-const port = parseInt(process.env.UPTIME_KUMA_PORT || process.env.PORT || 4001);
+const port = parseInt(process.env.uptime_kuma_revanced_PORT || process.env.PORT || 4001);
 
 let options = {
     host: hostname || "127.0.0.1",

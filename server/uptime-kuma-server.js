@@ -76,7 +76,7 @@ class UptimeKumaServer {
      *
      */
     constructor() {
-        // Set axios default user-agent to Uptime-Kuma/version
+        // Set axios default user-agent to uptime-kuma-revanced/version
         axios.defaults.headers.common["User-Agent"] = this.getUserAgent();
 
         // Set default axios timeout to 5 minutes instead of infinity
@@ -159,7 +159,7 @@ class UptimeKumaServer {
                 if (transport === "polling") {
                     callback(null, true);
                 } else if (transport === "websocket") {
-                    const bypass = process.env.UPTIME_KUMA_WS_ORIGIN_CHECK === "bypass";
+                    const bypass = process.env.uptime_kuma_revanced_WS_ORIGIN_CHECK === "bypass";
                     if (bypass) {
                         log.info("auth", "WebSocket origin check is bypassed");
                         callback(null, true);
@@ -504,7 +504,7 @@ class UptimeKumaServer {
      * @returns {void}
      */
     async startNSCDServices() {
-        if (process.env.UPTIME_KUMA_IS_CONTAINER) {
+        if (process.env.uptime_kuma_revanced_IS_CONTAINER) {
             try {
                 log.info("services", "Starting nscd");
                 await childProcessAsync.exec("sudo service nscd start");
@@ -519,7 +519,7 @@ class UptimeKumaServer {
      * @returns {void}
      */
     async stopNSCDServices() {
-        if (process.env.UPTIME_KUMA_IS_CONTAINER) {
+        if (process.env.uptime_kuma_revanced_IS_CONTAINER) {
             try {
                 log.info("services", "Stopping nscd");
                 await childProcessAsync.exec("sudo service nscd stop");
@@ -534,7 +534,7 @@ class UptimeKumaServer {
      * @returns {string} User-Agent
      */
     getUserAgent() {
-        return "Uptime-Kuma/" + require("../package.json").version;
+        return "uptime-kuma-revanced/" + require("../package.json").version;
     }
 
     /**

@@ -1,15 +1,15 @@
 services:
-  uptime-kuma:
+  uptime-kuma-revanced:
     build:
       context: .
       dockerfile: docker/dockerfile
       target: release
-    container_name: uptime-kuma
+    container_name: uptime-kuma-revanced
     restart: unless-stopped
     environment:
       # Admin user credentials - created automatically on first startup
-      - UPTIME_KUMA_ADMIN_USER=${UPTIME_KUMA_ADMIN_USER}
-      - UPTIME_KUMA_ADMIN_PASSWORD=${UPTIME_KUMA_ADMIN_PASSWORD}
+      - uptime_kuma_revanced_ADMIN_USER=${uptime_kuma_revanced_ADMIN_USER}
+      - uptime_kuma_revanced_ADMIN_PASSWORD=${uptime_kuma_revanced_ADMIN_PASSWORD}
     volumes:
       - ./data:/app/data
       - ./data/monitors.yaml:/app/data/monitors.yaml

@@ -504,7 +504,7 @@ function createSampleConfigFile() {
         return;
     }
     
-    const sampleConfig = `# Uptime Kuma Config File Monitors
+    const sampleConfig = `# Uptime Kuma Revanced Config File Monitors
 # 
 # Place this file at: data/monitors.yaml
 # Monitors defined here will be automatically synced with the database.

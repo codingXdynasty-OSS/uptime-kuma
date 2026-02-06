@@ -48,7 +48,7 @@ monitors:
 
 ## Supported Monitor Types
 
-All Uptime Kuma monitor types are supported:
+All Uptime Kuma Revanced monitor types are supported:
 
 | Type | Required Fields |
 |------|----------------|
@@ -146,7 +146,7 @@ Two new socket events are available:
 ## Getting Started
 
 1. Install the new dependency: `npm install js-yaml`
-2. Start Uptime Kuma - it will create a sample config file
+2. Start Uptime Kuma Revanced - it will create a sample config file
 3. Copy `data/monitors.yaml.sample` to `data/monitors.yaml`
 4. Edit `data/monitors.yaml` with your monitors
 5. The monitors will be automatically synced

@@ -3,7 +3,7 @@
  */
 const { TimeLogger } = require("../src/util");
 const { R } = require("redbean-node");
-const { UptimeKumaServer } = require("./uptime-kuma-server");
+const { UptimeKumaServer } = require("./uptime-kuma-revanced-server");
 const server = UptimeKumaServer.getInstance();
 const io = server.io;
 const { setting } = require("./util-server");
@@ -151,7 +151,7 @@ async function sendInfo(socket, hideVersion = false) {
     if (!hideVersion) {
         info.version = checkVersion.version;
         info.latestVersion = checkVersion.latestVersion;
-        info.isContainer = process.env.UPTIME_KUMA_IS_CONTAINER === "1";
+        info.isContainer = process.env.uptime_kuma_revanced_IS_CONTAINER === "1";
         info.dbType = Database.dbConfig.type;
         info.runtime = {
             platform: process.platform, // linux or win32
