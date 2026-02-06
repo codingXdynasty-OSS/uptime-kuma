@@ -1,9 +1,13 @@
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:2
+    build:
+      context: .
+      dockerfile: docker/dockerfile
+      target: release
+    container_name: uptime-kuma
     restart: unless-stopped
     volumes:
       - ./data:/app/data
+      - ./data/monitors.yaml:/app/data/monitors.yaml
     ports:
-      # <Host Port>:<Container Port>
       - "4001:4001"
