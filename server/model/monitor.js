@@ -414,6 +414,7 @@ class Monitor extends BeanModel {
      * @returns {Promise<void>}
      */
     async start(io) {
+        await this.stop();
         let previousBeat = null;
         let retries = 0;
 

@@ -701,14 +701,6 @@ let needSetup = false;
 
                 needSetup = false;
 
-                // Initialize config file monitors now that we have a user
-                try {
-                    await initConfigFileMonitors(user.id, server);
-                    log.info("server", "Config file monitors initialized after user setup");
-                } catch (e) {
-                    log.warn("server", "Failed to initialize config file monitors: " + e.message);
-                }
-
                 callback({
                     ok: true,
                     msg: "successAdded",
@@ -812,7 +804,9 @@ let needSetup = false;
 
                 // Prevent editing config-managed monitors via UI
                 if (bean.config_managed) {
-                    throw new Error("This monitor is managed via config file and cannot be edited through the UI. Please modify the monitors.yaml file instead.");
+                    throw new Error(
+                        "This monitor is managed via config file and cannot be edited through the UI. Please modify the monitors.yaml file instead."
+                    );
                 }
 
                 // Check if Parent is Descendant (would cause endless loop)
@@ -1123,7 +1117,9 @@ let needSetup = false;
 
                 // Prevent deleting config-managed monitors via UI
                 if (monitor && monitor.config_managed) {
-                    throw new Error("This monitor is managed via config file and cannot be deleted through the UI. Please remove it from the monitors.yaml file instead.");
+                    throw new Error(
+                        "This monitor is managed via config file and cannot be deleted through the UI. Please remove it from the monitors.yaml file instead."
+                    );
                 }
 
                 // Log with context about deletion type
@@ -1729,7 +1725,7 @@ let needSetup = false;
         // ***************************
 
         log.debug("auth", "check auto login");
-        
+
         // Check for pending auto-login (user created from env vars)
         if (server.pendingAutoLoginUserId) {
             const user = await R.findOne("user", " id = ? ", [server.pendingAutoLoginUserId]);
@@ -1895,13 +1891,15 @@ async function initDatabase(testMode = false) {
     // If there is no record in user table, it is a new Uptime Kuma Revanced instance, need to setup
     if ((await R.knex("user").count("id as count").first()).count === 0) {
         // Check if admin credentials are provided via environment variables
-        const autoCreateAdmin = process.env.uptime_kuma_revanced_AUTO_CREATE_ADMIN === "1" || process.env.uptime_kuma_revanced_AUTO_CREATE_ADMIN === "true";
+        const autoCreateAdmin =
+            process.env.uptime_kuma_revanced_AUTO_CREATE_ADMIN === "1" ||
+            process.env.uptime_kuma_revanced_AUTO_CREATE_ADMIN === "true";
         const adminUser = process.env.uptime_kuma_revanced_ADMIN_USER;
         const adminPass = process.env.uptime_kuma_revanced_ADMIN_PASSWORD;
 
         if (autoCreateAdmin && adminUser && adminPass) {
             log.info("server", "Creating admin user from environment variables");
-            
+
             // Validate password strength
             if (passwordStrength(adminPass).value === "Too weak") {
                 log.error("server", "uptime_kuma_revanced_ADMIN_PASSWORD is too weak. Please use a stronger password.");
@@ -1915,20 +1913,14 @@ async function initDatabase(testMode = false) {
                 needSetup = false;
 
                 // Check if auto-login is enabled (defaults to true if not specified)
-                const autoLoginEnabled = process.env.uptime_kuma_revanced_AUTO_LOGIN !== "0" && process.env.uptime_kuma_revanced_AUTO_LOGIN !== "false";
-                
+                const autoLoginEnabled =
+                    process.env.uptime_kuma_revanced_AUTO_LOGIN !== "0" &&
+                    process.env.uptime_kuma_revanced_AUTO_LOGIN !== "false";
+
                 if (autoLoginEnabled) {
                     // Set flag for auto-login on first connection
                     server.pendingAutoLoginUserId = user.id;
                     log.info("server", "Auto-login pending for first connection");
-                }
-
-                // Initialize config file monitors now that we have a user
-                try {
-                    await initConfigFileMonitors(user.id, server);
-                    log.info("server", "Config file monitors initialized after env user creation");
-                } catch (e) {
-                    log.warn("server", "Failed to initialize config file monitors: " + e.message);
                 }
             }
         } else {
@@ -2068,7 +2060,9 @@ gracefulShutdown(server.httpServer, {
 let unexpectedErrorHandler = (error, promise) => {
     console.trace(error);
     UptimeKumaServer.errorLog(error, false);
-    console.error("If you keep encountering errors, please report to https://github.com/louislam/uptime-kuma-revanced/issues");
+    console.error(
+        "If you keep encountering errors, please report to https://github.com/louislam/uptime-kuma-revanced/issues"
+    );
 };
 process.addListener("unhandledRejection", unexpectedErrorHandler);
 process.addListener("uncaughtException", unexpectedErrorHandler);

@@ -1,11 +1,11 @@
 /**
  * Config File Monitors
- * 
+ *
  * This module allows monitors to be defined via a YAML configuration file
  * instead of (or in addition to) the UI.
- * 
+ *
  * The config file should be placed at: data/monitors.yaml
- * 
+ *
  * Example config file format:
  * ```yaml
  * monitors:
@@ -15,12 +15,12 @@
  *     interval: 60
  *     retryInterval: 60
  *     maxretries: 3
- *     
+ *
  *   - name: "Example Ping"
  *     type: "ping"
  *     hostname: "example.com"
  *     interval: 60
- *     
+ *
  *   - name: "My TCP Service"
  *     type: "port"
  *     hostname: "localhost"
@@ -136,23 +136,23 @@ function configFileExists() {
  */
 function readConfigFile() {
     const filePath = getConfigFilePath();
-    
+
     if (!filePath || !fs.existsSync(filePath)) {
         if (filePath) {
             log.debug("config-file", "Config file not found at: " + filePath);
         }
         return null;
     }
-    
+
     try {
         const fileContents = fs.readFileSync(filePath, "utf8");
         const config = yaml.load(fileContents);
-        
+
         if (!config || !config.monitors) {
             log.warn("config-file", "Config file found but no 'monitors' section defined");
             return { monitors: [] };
         }
-        
+
         return config;
     } catch (e) {
         log.error("config-file", "Error parsing config file: " + e.message);
@@ -168,12 +168,12 @@ function readConfigFile() {
  */
 function validateMonitorConfig(monitorConfig, index) {
     const errors = [];
-    
+
     // Name is always required
     if (!monitorConfig.name) {
         errors.push(`Monitor at index ${index}: 'name' is required`);
     }
-    
+
     // Type is always required
     if (!monitorConfig.type) {
         errors.push(`Monitor at index ${index}: 'type' is required`);
@@ -184,13 +184,19 @@ function validateMonitorConfig(monitorConfig, index) {
             errors.push(`Monitor "${monitorConfig.name}": Unknown monitor type "${monitorConfig.type}"`);
         } else {
             for (const field of requiredFields) {
-                if (monitorConfig[field] === undefined || monitorConfig[field] === null || monitorConfig[field] === "") {
-                    errors.push(`Monitor "${monitorConfig.name}": Field "${field}" is required for type "${monitorConfig.type}"`);
+                if (
+                    monitorConfig[field] === undefined ||
+                    monitorConfig[field] === null ||
+                    monitorConfig[field] === ""
+                ) {
+                    errors.push(
+                        `Monitor "${monitorConfig.name}": Field "${field}" is required for type "${monitorConfig.type}"`
+                    );
                 }
             }
         }
     }
-    
+
     // Validate interval bounds
     if (monitorConfig.interval !== undefined) {
         if (monitorConfig.interval < 20) {
@@ -200,7 +206,7 @@ function validateMonitorConfig(monitorConfig, index) {
             errors.push(`Monitor "${monitorConfig.name}": interval must be at most 86400 seconds (24 hours)`);
         }
     }
-    
+
     // Validate retry interval bounds
     if (monitorConfig.retryInterval !== undefined) {
         if (monitorConfig.retryInterval < 20) {
@@ -210,10 +216,10 @@ function validateMonitorConfig(monitorConfig, index) {
             errors.push(`Monitor "${monitorConfig.name}": retryInterval must be at most 86400 seconds (24 hours)`);
         }
     }
-    
+
     return {
         valid: errors.length === 0,
-        errors
+        errors,
     };
 }
 
@@ -227,9 +233,9 @@ function configToMonitorBean(config, userId) {
     // Apply defaults
     const monitor = {
         ...MONITOR_DEFAULTS,
-        ...config
+        ...config,
     };
-    
+
     // Convert accepted_statuscodes to JSON if it's an array
     if (Array.isArray(monitor.accepted_statuscodes)) {
         monitor.accepted_statuscodes_json = JSON.stringify(monitor.accepted_statuscodes);
@@ -237,7 +243,7 @@ function configToMonitorBean(config, userId) {
         monitor.accepted_statuscodes_json = monitor.accepted_statuscodes;
     }
     delete monitor.accepted_statuscodes;
-    
+
     // Handle JSON fields
     const jsonFields = ["kafkaProducerBrokers", "kafkaProducerSaslOptions", "rabbitmqNodes", "conditions"];
     for (const field of jsonFields) {
@@ -247,13 +253,13 @@ function configToMonitorBean(config, userId) {
             }
         }
     }
-    
+
     // Set user_id
     monitor.user_id = userId;
-    
+
     // Mark as config-managed
     monitor.config_managed = true;
-    
+
     return monitor;
 }
 
@@ -267,13 +273,13 @@ async function findOrCreateMonitor(monitorConfig, userId) {
     // Try to find existing config-managed monitor with the same name
     let bean = await R.findOne("monitor", " name = ? AND user_id = ? AND config_managed = 1 ", [
         monitorConfig.name,
-        userId
+        userId,
     ]);
-    
+
     if (!bean) {
         bean = R.dispense("monitor");
     }
-    
+
     return bean;
 }
 
@@ -288,19 +294,19 @@ async function syncConfigMonitors(userId, server) {
         added: 0,
         updated: 0,
         removed: 0,
-        errors: []
+        errors: [],
     };
-    
+
     const config = readConfigFile();
-    
+
     if (!config) {
         log.info("config-file", "No config file found or config file is invalid, skipping sync");
         return result;
     }
-    
+
     const monitors = config.monitors || [];
     log.info("config-file", `Found ${monitors.length} monitors in config file`);
-    
+
     // Validate all monitors first
     for (let i = 0; i < monitors.length; i++) {
         const validation = validateMonitorConfig(monitors[i], i);
@@ -308,7 +314,7 @@ async function syncConfigMonitors(userId, server) {
             result.errors.push(...validation.errors);
         }
     }
-    
+
     if (result.errors.length > 0) {
         log.error("config-file", "Config validation errors:");
         for (const error of result.errors) {
@@ -324,56 +330,77 @@ async function syncConfigMonitors(userId, server) {
 
         return result;
     }
-    
+
     // Get all existing config-managed monitors
     const existingMonitors = await R.find("monitor", " user_id = ? AND config_managed = 1 ", [userId]);
-    const configMonitorNames = new Set(monitors.map(m => m.name));
-    
+    const configMonitorNames = new Set(monitors.map((m) => m.name));
+
     // Process each monitor from config
     for (const monitorConfig of monitors) {
         try {
             const bean = await findOrCreateMonitor(monitorConfig, userId);
             const isNew = !bean.id;
-            
+
             const monitorData = configToMonitorBean(monitorConfig, userId);
-            
-            // Import data to bean
-            for (const key in monitorData) {
-                if (key !== "id") {
-                    bean[key] = monitorData[key];
+
+            // Check if anything actually changed
+            let hasChanged = isNew;
+            if (!isNew) {
+                for (const key in monitorData) {
+                    if (key !== "id") {
+                        // Compare values (handling JSON strings vs objects if needed, but monitorData already has strings)
+                        if (String(bean[key]) !== String(monitorData[key])) {
+                            // Ignore null vs undefined vs empty string for some fields if they are effectively same
+                            if (!bean[key] && !monitorData[key]) {
+                                continue;
+                            }
+                            hasChanged = true;
+                            break;
+                        }
+                    }
                 }
             }
-            
-            // Validate the monitor
-            bean.validate();
-            
-            // Store the monitor
-            await R.store(bean);
-            
-            if (isNew) {
-                result.added++;
-                log.info("config-file", `Added monitor: ${bean.name}`);
+
+            if (hasChanged) {
+                // Import data to bean
+                for (const key in monitorData) {
+                    if (key !== "id") {
+                        bean[key] = monitorData[key];
+                    }
+                }
+
+                // Validate the monitor
+                bean.validate();
+
+                // Store the monitor
+                await R.store(bean);
+
+                if (isNew) {
+                    result.added++;
+                    log.info("config-file", `Added monitor: ${bean.name}`);
+                } else {
+                    result.updated++;
+                    log.info("config-file", `Updated monitor: ${bean.name}`);
+                }
+
+                // Restart the monitor if active
+                if (bean.active && server) {
+                    if (bean.id in server.monitorList) {
+                        await server.monitorList[bean.id].stop();
+                    }
+                    server.monitorList[bean.id] = bean;
+                    await bean.start(server.io);
+                }
             } else {
-                result.updated++;
-                log.info("config-file", `Updated monitor: ${bean.name}`);
+                log.debug("config-file", `Monitor "${bean.name}" unchanged, skipping.`);
             }
-            
-            // Start the monitor if active
-            if (bean.active && server) {
-                if (bean.id in server.monitorList) {
-                    await server.monitorList[bean.id].stop();
-                }
-                server.monitorList[bean.id] = bean;
-                await bean.start(server.io);
-            }
-            
         } catch (e) {
             const errorMsg = `Error processing monitor "${monitorConfig.name}": ${e.message}`;
             result.errors.push(errorMsg);
             log.error("config-file", errorMsg);
         }
     }
-    
+
     // Remove monitors that are no longer in config
     for (const existingMonitor of existingMonitors) {
         if (!configMonitorNames.has(existingMonitor.name)) {
@@ -383,7 +410,7 @@ async function syncConfigMonitors(userId, server) {
                     await server.monitorList[existingMonitor.id].stop();
                     delete server.monitorList[existingMonitor.id];
                 }
-                
+
                 // Delete from database
                 await R.trash(existingMonitor);
                 result.removed++;
@@ -395,12 +422,15 @@ async function syncConfigMonitors(userId, server) {
             }
         }
     }
-    
-    log.info("config-file", `Sync complete: Added ${result.added}, Updated ${result.updated}, Removed ${result.removed}`);
+
+    log.info(
+        "config-file",
+        `Sync complete: Added ${result.added}, Updated ${result.updated}, Removed ${result.removed}`
+    );
     if (result.errors.length > 0) {
         log.warn("config-file", `Sync completed with ${result.errors.length} errors`);
     }
-    
+
     return result;
 }
 
@@ -412,20 +442,20 @@ async function syncConfigMonitors(userId, server) {
  */
 function startFileWatcher(userId, server) {
     const filePath = getConfigFilePath();
-    
+
     if (!filePath) {
         return;
     }
-    
+
     if (fileWatcher) {
         fileWatcher.close();
         fileWatcher = null;
     }
-    
+
     // Only watch if the file exists
     if (!fs.existsSync(filePath)) {
         log.info("config-file", "Config file not found, file watcher not started");
-        
+
         // Watch the directory for file creation
         const dirPath = path.dirname(filePath);
         try {
@@ -444,23 +474,23 @@ function startFileWatcher(userId, server) {
         }
         return;
     }
-    
-    log.info("config-file", "Starting file watcher for: " + filePath);
-    
+
+    let lastFileHash = null;
+
     try {
         fileWatcher = fs.watch(filePath, (eventType, filename) => {
             // Debounce to avoid multiple rapid syncs
             if (debounceTimer) {
                 clearTimeout(debounceTimer);
             }
-            
+
             debounceTimer = setTimeout(async () => {
-                log.info("config-file", `Config file changed (${eventType}), re-syncing monitors...`);
-                
-                // Check if file still exists (might have been deleted)
+                log.debug("config-file", `Config file event (${eventType})`);
+
+                // Check if file still exists
                 if (!fs.existsSync(filePath)) {
+                    // ... (existing logic for file deletion)
                     log.warn("config-file", "Config file was deleted, removing all config-managed monitors");
-                    // Remove all config-managed monitors
                     const existingMonitors = await R.find("monitor", " user_id = ? AND config_managed = 1 ", [userId]);
                     for (const monitor of existingMonitors) {
                         try {
@@ -474,22 +504,37 @@ function startFileWatcher(userId, server) {
                             log.error("config-file", `Error removing monitor: ${e.message}`);
                         }
                     }
-                    
-                    // Restart directory watching
+
                     fileWatcher.close();
                     fileWatcher = null;
                     startFileWatcher(userId, server);
                     return;
                 }
-                
+
+                // Check hash to see if content actually changed
+                try {
+                    const crypto = require("crypto");
+                    const content = fs.readFileSync(filePath, "utf8");
+                    const currentHash = crypto.createHash("md5").update(content).digest("hex");
+
+                    if (currentHash === lastFileHash) {
+                        log.debug("config-file", "File changed but content is identical, skipping sync");
+                        return;
+                    }
+
+                    lastFileHash = currentHash;
+                } catch (e) {
+                    log.error("config-file", "Error checking file hash: " + e.message);
+                }
+
+                log.info("config-file", "Config file content changed, re-syncing monitors...");
                 await syncConfigMonitors(userId, server);
-            }, 1000); // 1 second debounce
+            }, 2000); // 2 second debounce
         });
-        
+
         fileWatcher.on("error", (error) => {
             log.error("config-file", "File watcher error: " + error.message);
         });
-        
     } catch (e) {
         log.error("config-file", "Could not start file watcher: " + e.message);
     }
@@ -505,7 +550,7 @@ function stopFileWatcher() {
         fileWatcher = null;
         log.info("config-file", "File watcher stopped");
     }
-    
+
     if (debounceTimer) {
         clearTimeout(debounceTimer);
         debounceTimer = null;
@@ -522,11 +567,11 @@ function createSampleConfigFile() {
         return;
     }
     const samplePath = filePath + ".sample";
-    
+
     if (fs.existsSync(samplePath)) {
         return;
     }
-    
+
     const sampleConfig = `# Uptime Kuma Revanced Config File Monitors
 # 
 # Place this file at: data/monitors.yaml
@@ -625,7 +670,7 @@ monitors:
 # sqlserver, postgres, mysql, mongodb, radius, redis, group, docker, grpc,
 # real-browser, snmp, smtp, rabbitmq
 `;
-    
+
     try {
         fs.writeFileSync(samplePath, sampleConfig, "utf8");
         log.info("config-file", "Created sample config file at: " + samplePath);
@@ -642,13 +687,13 @@ monitors:
  */
 async function initConfigFileMonitors(userId, server) {
     log.info("config-file", "Initializing config file monitors");
-    
+
     // Create sample config file
     createSampleConfigFile();
-    
+
     // Initial sync
     await syncConfigMonitors(userId, server);
-    
+
     // Start file watcher
     startFileWatcher(userId, server);
 }
