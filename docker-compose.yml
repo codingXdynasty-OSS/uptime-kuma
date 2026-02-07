@@ -20,7 +20,7 @@ services:
       - uptime_kuma_revanced_DB_USER=${uptime_kuma_revanced_DB_USER}
       - uptime_kuma_revanced_DB_PASSWORD=${uptime_kuma_revanced_DB_PASSWORD}
       - uptime_kuma_revanced_DB_SSL=${uptime_kuma_revanced_DB_SSL}
-      - uptime_kuma_revanced_IS_CONTAINER=1
+      - uptime_kuma_revanced_IS_CONTAINER=${uptime_kuma_revanced_IS_CONTAINER}
     volumes:
       - ./data:/app/data
       - ./config:/app/config
