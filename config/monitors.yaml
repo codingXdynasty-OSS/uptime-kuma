@@ -14,21 +14,9 @@ monitors:
     interval: 60
     active: true
 
-  - name: "AT&T"
-    type: "http"
-    url: "https://www.att.com"
-    interval: 60
-    active: true
-
   - name: "Amazon"
     type: "http"
     url: "https://www.amazon.com"
-    interval: 60
-    active: true
-
-  - name: "Astound Broadbank"
-    type: "http"
-    url: "https://www.astound.com"
     interval: 60
     active: true
 
